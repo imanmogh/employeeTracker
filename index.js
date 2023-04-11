@@ -3,14 +3,12 @@ const db = require('../config/connection')
 const mysql2 = require('mysql2');
 const { query } = require('../config/connection');
 const cTable = require('console.table');
-const figlet = require('figlet');
-const colors = require('colors/safe');
+
 
 const viewAllDeptQuery = require('./viewAllDeptQuery');
 const viewAllRolesQuery = require('./viewAllRolesQuery');
 const viewAllEmployeesQuery = require('./viewAllEmployeesQuery');
 
-// prompt questions array
 const optionsList = [
   {
     type: 'list',
@@ -452,9 +450,9 @@ const deleteEmployee = () => {
 const bye = () => {
   console.log(``);
   console.log(``);
-  console.log(colors.rainbow(figlet.textSync('bye!')));
+  console.log('bye!');
   console.log(``);
   console.log(``);
 }
 
-module.exports = initialPrompt;
+module.exports = options;

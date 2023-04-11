@@ -22,10 +22,12 @@ WHEN I choose to update an employee role
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 */
 
+const options = require('/Users/imanmoghaddas/Desktop/Coding-bootcamp/Challenges/12-employeeTracker/employeeTracker/index.js');
+
 const express = require('express');
 // Import and require mysql2
 const mysql = require('mysql2');
-
+require('dotenv').config();
 const PORT = process.env.PORT || 3001;
 const app = express();
 
@@ -40,14 +42,13 @@ const db = mysql.createConnection(
     // MySQL username,
     user: 'root',
     // TODO: Add MySQL password here
-    password: '',
-    database: 'movies_db'
+    password: process.env.DB_PASSWORD,
+    database: 'employee_db'
   },
-  console.log(`Connected to the movies_db database.`)
+  console.log(`Connected to the employee_db database.`)
 );
 
 
-// Default response for any other request (Not Found)
 app.use((req, res) => {
   res.status(404).end();
 });
@@ -55,3 +56,4 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
