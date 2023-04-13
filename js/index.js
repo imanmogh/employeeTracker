@@ -1,13 +1,13 @@
 const inquirer = require('inquirer');
 const db = require('../config/connection')
-const mysql2 = require('mysql2');
-const { query } = require('../config/connection');
-const cTable = require('console.table');
+// const mysql2 = require('mysql2');
+// const { query } = require('../config/connection');
+// const cTable = require('console.table');
 
 
-const viewAllDeptQuery = require('./viewAllDeptQuery');
-const viewAllRolesQuery = require('./viewAllRolesQuery');
-const viewAllEmployeesQuery = require('./viewAllEmployeesQuery');
+const viewAllDeptQuery = require('./deptQuery');
+const viewAllRolesQuery = require('./rolesQuery');
+const viewAllEmployeesQuery = require('./employeeQuery');
 
 const optionsList = [
   {
@@ -73,7 +73,7 @@ const options = async () => {
 
       default:
         db.end();
-        bye();
+        finished();
         process.exit();
     }
   });
@@ -134,7 +134,7 @@ const addDepartment = async () => {
   ])
     .then((answers) => {
       const department = answers.depts;
-      const sql = `INSERT INTO department (dep_name) VALUES ('${department}')`;
+      const sql = `INSERT INTO department (department_name) VALUES ('${department}')`;
       db.query(sql, function (err, results) {
         if (err) {
           console.log(err);
@@ -147,13 +147,13 @@ const addDepartment = async () => {
 };
 
 const addRole = () => {
-  db.query(`SELECT id, dep_name FROM department`,
+  db.query(`SELECT id, department_name FROM department`,
     async function (err, results) {
       if (err) {
       } else {
 
         let deptArray = results.map((obj) => {
-          return { value: obj.id, name: obj.dep_name };
+          return { value: obj.id, name: obj.department_name };
         });
         await inquirer.prompt([
           {
@@ -447,12 +447,8 @@ const deleteEmployee = () => {
 };
 
 
-const bye = () => {
-  console.log(``);
-  console.log(``);
-  console.log('bye!');
-  console.log(``);
-  console.log(``);
+const finished = () => {
+  console.log('finished');
 }
 
 module.exports = options;

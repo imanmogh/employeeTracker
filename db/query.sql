@@ -1,7 +1,7 @@
 SELECT id AS "Department ID", department_name AS "Department" 
 FROM department;
 
-SELECT roles.id AS "Role ID", roles.title AS "Job Title", department.dep_name AS "Department", salary AS "Salary"
+SELECT roles.id AS "Role ID", roles.title AS "Job Title", department.department_name AS "Department", salary AS "Salary"
 FROM roles
 INNER JOIN department ON roles.department_id = department.id
 ORDER BY roles.id ASC
@@ -21,7 +21,7 @@ FROM employees
 ORDER BY 
     employees.id ASC;
 
-INSERT INTO department (dep_name) 
+INSERT INTO department (department_name) 
 VALUES ('Field Ops')
 
 INSERT INTO roles (title, salary, department_id) 
