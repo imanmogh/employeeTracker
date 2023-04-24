@@ -1,8 +1,5 @@
 const inquirer = require('inquirer');
 const db = require('../config/connection')
-// const mysql2 = require('mysql2');
-// const { query } = require('../config/connection');
-// const cTable = require('console.table');
 
 
 const viewAllDeptQuery = require('./deptQuery');
@@ -324,81 +321,52 @@ const updateEmployeeRole = () => {
 
 const deleteEmployee = () => {
   let query = "SELECT employees.id, employees.first_name, employees.last_name FROM employees;";
-  // connect to mySQL using query instruction 1 to access data from roles table
   db.query(query, function (err, res) {
-    // throw error if there is issue accessing data
     if (err) throw err;
-    // combine names from first_name/ last_name cols to be displayed in terminal
     for (i = 0; i < res.length; i++) {
-      // create new row called manager, containing each employee's manager name
       res[i].employee = res[i].first_name + " " + res[i].last_name;
-      // empDisplay = res[i].first_name + " " + res[i].last_name;
-      // remove first_name from res so as to not display it
       delete res[i].first_name;
-      // remove last_name from res so as to not display it
       delete res[i].last_name;
     };
-    // print data retrieved to terminal in table format 
     console.table(res);
-    // assign data from employees table (res) to employeeList
     let employeeList = res;
-    // array of actions to prompt user
     let addEmpPrompt = [
       {
         name: "select_employee",
         type: "list",
         message: "Terminate employee",
-        // dynamic choises using employeeList (first_name and last_name cols of employees table)
         choices: function () {
-          // init employees array - used to return existing employee names as choises array prompted to user
           employees = [];
-          // loop through employeeList to extract the employee names from employeeList which is an object array containing data from employees table in the form of rowPackets
           for (i = 0; i < employeeList.length; i++) {
-            // concat mId, first_name, and last_name strings and push the resulting string into our employees (choises) array
             employees.push(employeeList[i].id + ": " + employeeList[i].employee);
           };
-          // add string "0: None" to the beginning of employees (choises)
           employees.unshift("0: Exit");
-          // return employees (choises) array to be rendered by inquirer to the user 
           return employees;
         }
       },
       {
         name: "confirm",
         type: "list",
-        // dynamic message using user selected employee name
         message: function (answers) {
           return "Are you sure you want to TERMINATE " + answers.select_employee.split(": ")[1];
         },
-        // prompt user to pick between Yes and No
         choices: ["Yes", "No"],
-        // dont use this prompt if user selected Exit in previous prompt
         when: function (answers) {
           return answers.select_employee !== "0: Exit";
         }
       }
     ];
-    // prompt user actions using inquirer 
     inquirer.prompt(addEmpPrompt)
-      // await user responce from inquirer
       .then(function (answer) {
-        // if user selects "0: Exit" return to main menu
         if (answer.select_employee == "0: Exit") {
-          // prompt user for next action
           options();
-          // if user selects "No" restart deleteEmployee
         } else if (answer.confirm == "No") {
-          // prompt user for next action
           deleteEmployee();
         } else {
-          // SQL command to insert new data in employees table
           let query = "DELETE FROM employees WHERE employees.id =" + answer.select_employee.split(": ")[0];
-          // connect to mySQL using query instruction to insert new employee in employee table
           db.query(query, function (err, res) {
-            // throw error if there is issue writing data
             if (err) throw err;
           });
-          // array of actions to prompt user
           let addagainPrompt = [
             {
               name: "again",
@@ -407,36 +375,22 @@ const deleteEmployee = () => {
               choices: ["Yes", "Exit"]
             }
           ];
-          // prompt user actions using inquirer 
           inquirer.prompt(addagainPrompt)
-            // await user responce from inquirer
             .then(function (answer) {
 
-              // SQL command to get data from employees table
               let query = "SELECT employees.id, employees.first_name, employees.last_name FROM employees;";
-              // connect to mySQL using query instruction to access data from roles table
               db.query(query, function (err, res) {
-                // throw error if there is issue accessing data
                 if (err) throw err;
-                // combine names from first_name/ last_name cols to be displayed in terminal
                 for (i = 0; i < res.length; i++) {
-                  // create new row called manager, containing each employee's manager name
                   res[i].employee = res[i].first_name + " " + res[i].last_name;
-                  // remove first_name from res so as to not display it
                   delete res[i].first_name;
-                  // remove last_name from res so as to not display it
                   delete res[i].last_name;
                 };
-                // execute function updateEmployee again if user selection is "Yes"
                 if (answer.again == "Yes") {
-                  // prompt add new employee to employee_db
                   deleteEmployee();
-                  // update employee first/ last_name table in terminal, and execute function cli_prompt if user selection is "Exit"
                 } else if (answer.again == "Exit") {
 
-                  // print data retrieved to terminal in table format 
                   console.table(res);
-                  // prompt user for next action
                   options();
                 };
               });
